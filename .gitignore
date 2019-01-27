@@ -30,3 +30,13 @@
 \.DS_Store
 
 zad1
+
+TMVA\.root
+
+*.png
+
+out 28\.01\.2019 00:42/notatka\.txt
+
+*.pdf
+
+dataset/weights/

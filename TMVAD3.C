@@ -78,23 +78,23 @@ int TMVAD3( TString myMethodList = "" )
 
    // Cut optimisation
    Use["Cuts"]            = 1;
-   Use["CutsD"]           = 1;
+   Use["CutsD"]           = 0;
    Use["CutsPCA"]         = 0;
    Use["CutsGA"]          = 0;
    Use["CutsSA"]          = 0;
    //
    // 1-dimensional likelihood ("naive Bayes estimator")
-   Use["Likelihood"]      = 1;
+   Use["Likelihood"]      = 0;
    Use["LikelihoodD"]     = 0; // the "D" extension indicates decorrelated input variables (see option strings)
-   Use["LikelihoodPCA"]   = 1; // the "PCA" extension indicates PCA-transformed input variables (see option strings)
+   Use["LikelihoodPCA"]   = 0; // the "PCA" extension indicates PCA-transformed input variables (see option strings)
    Use["LikelihoodKDE"]   = 0;
    Use["LikelihoodMIX"]   = 0;
    //
    // Mutidimensional likelihood and Nearest-Neighbour methods
-   Use["PDERS"]           = 1;
+   Use["PDERS"]           = 0;
    Use["PDERSD"]          = 0;
    Use["PDERSPCA"]        = 0;
-   Use["PDEFoam"]         = 1;
+   Use["PDEFoam"]         = 0;
    Use["PDEFoamBoost"]    = 0; // uses generalised MVA method boosting
    Use["KNN"]             = 1; // k-nearest neighbour method
    //
@@ -106,7 +106,7 @@ int TMVAD3( TString myMethodList = "" )
    Use["HMatrix"]         = 0;
    //
    // Function Discriminant analysis
-   Use["FDA_GA"]          = 1; // minimisation of user-defined function using Genetics Algorithm
+   Use["FDA_GA"]          = 0; // minimisation of user-defined function using Genetics Algorithm
    Use["FDA_SA"]          = 0;
    Use["FDA_MC"]          = 0;
    Use["FDA_MT"]          = 0;
@@ -116,14 +116,14 @@ int TMVAD3( TString myMethodList = "" )
    // Neural Networks (all are feed-forward Multilayer Perceptrons)
    Use["MLP"]             = 0; // Recommended ANN
    Use["MLPBFGS"]         = 0; // Recommended ANN with optional training method
-   Use["MLPBNN"]          = 1; // Recommended ANN with BFGS training method and bayesian regulator
+   Use["MLPBNN"]          = 0; // Recommended ANN with BFGS training method and bayesian regulator
    Use["CFMlpANN"]        = 0; // Depreciated ANN from ALEPH
    Use["TMlpANN"]         = 0; // ROOT's own ANN
    Use["DNN_GPU"]         = 0; // CUDA-accelerated DNN training.
    Use["DNN_CPU"]         = 0; // Multi-core accelerated DNN.
    //
    // Support Vector Machine
-   Use["SVM"]             = 1;
+   Use["SVM"]             = 0;
    //
    // Boosted Decision Trees
    Use["BDT"]             = 1; // uses Adaptive Boost
@@ -133,7 +133,7 @@ int TMVAD3( TString myMethodList = "" )
    Use["BDTF"]            = 0; // allow usage of fisher discriminant for node splitting
    //
    // Friedman's RuleFit method, ie, an optimised series of cuts ("rules")
-   Use["RuleFit"]         = 1;
+   Use["RuleFit"]         = 0;
    // ---------------------------------------------------------------
 
    std::cout << std::endl;
@@ -172,8 +172,8 @@ int TMVAD3( TString myMethodList = "" )
    TFile *input1(0);
    TFile *input2(0);
 
-   TString fname1; //= "/home/miko/D0_background.root";
-   TString fname2; //= "/home/miko/D0_Signal_MonteCarlo.root";
+   TString fname1 = "/home/franecki/Dokumenty/laby naukowe/z OneDrive/D0_background.root";
+   TString fname2 = "/home/franecki/Dokumenty/laby naukowe/z OneDrive/D0_Signal_MonteCarlo.root";
       input1 = TFile::Open( fname1 ); // check if file in local directory exists
       input2 = TFile::Open( fname2 ); // check if file in local directory exists
 
@@ -244,17 +244,13 @@ int TMVAD3( TString myMethodList = "" )
 
 
 
-   dataloader->AddVariable( "decayLength", "Decay Length", "mm", 'F' );
-   dataloader->AddVariable( "dca12", 'F' );
-   dataloader->AddVariable( "dcaKaon", 'F' );
-   dataloader->AddVariable( "dcaV0ToPv", 'F' );
-   dataloader->AddVariable( "ptKaon", 'F' );
-   dataloader->AddVariable( "ptPion", 'F' );
-   dataloader->AddVariable( "dcaPion", 'F' );
-
-
-
-
+   dataloader->AddVariable( "decayLength", "Decay Length", 'F' );
+   dataloader->AddVariable( "dca12", "DCA 12", 'F' );
+   dataloader->AddVariable( "dcaKaon", "DCA - Kaon", 'F' );
+   dataloader->AddVariable( "dcaV0ToPv", "DCA - V0 to Pv", 'F' );
+   dataloader->AddVariable( "ptKaon", "Transverse Momentum - Kaon", 'F' );
+   dataloader->AddVariable( "ptPion", "Transverse Momentum - Pion", 'F' );
+   dataloader->AddVariable( "dcaPion", "DCA - Pion", 'F' );
 
 
 
@@ -322,9 +318,9 @@ int TMVAD3( TString myMethodList = "" )
 
 
 
-	dataloader->SetSignalWeightExpression( "w*pt*matchHFTweight*Ncol*2*3.1415*0.038*0.8");
+	dataloader->SetSignalWeightExpression( "w*pt*ncoll*2*3.1415*0.038*0.8");
 
-
+  //w*pt*matchHftW*ncoll*2*3.1415*0.038*0.8 - problem z matchHftW
 
    // Apply additional cuts on the signal and background samples (can be different)
 
@@ -354,7 +350,7 @@ int TMVAD3( TString myMethodList = "" )
 
 
        dataloader->PrepareTrainingAndTestTree( mycuts, mycutb,
-            "nTrain_Signal=1000:nTrain_Background=1000:nTest_Signal=1000:nTest_Background=1000" );
+            "nTrain_Signal=20000:nTrain_Background=20000:nTest_Signal=20000:nTest_Background=20000" );
 
 
 
