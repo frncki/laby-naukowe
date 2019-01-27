@@ -30,7 +30,8 @@ int main() {
   double * zMomentum = new double[size];
   double * theta = new double[size];
   double * eta = new double[size];
-  double mass = 1.8; //GeV
+  //double mass = 1.777; //taon in GeV
+  double mass = 0.139; //pion in GeV
 
   fstream file;
 
@@ -42,15 +43,16 @@ int main() {
 		cout << "Access to file denied!" << endl << endl;
 	}
 
-  file << "n\ty\tpT\tpZ\ttheta\teta" << endl;
+  file << "n\ty\teta" << endl;
 
   for (int i = 0; i < size; i++) {
     rapidity[i] = fRand(-5, 5);
     transverseMomentum[i] = fRand(-10, 10);
     zMomentum[i] = sqrt(pow(mass, 2) + pow(transverseMomentum[i], 2)) * sinh(rapidity[i]);
     theta[i] = atan(transverseMomentum[i] / zMomentum[i]);
+    if (theta[i] < 0) theta[i] *= -1;
     eta[i] = -log(tan(theta[i] / 2));
-    file << i + 1 << "\t" << rapidity[i] << "\t" << transverseMomentum[i] << "\t" << zMomentum[i] << "\t" << theta[i] << "\t" << eta[i] << endl;
+    file << i + 1 << "\t" << rapidity[i] << "\t" /* << transverseMomentum[i] << "\t" << zMomentum[i] << "\t" << theta[i] << "\t"*/ << eta[i] << endl;
   }
 
   file.close();
